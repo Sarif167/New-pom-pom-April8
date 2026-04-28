@@ -71,7 +71,7 @@ TUTORIAL_LINK = environ.get("TUTORIAL_LINK", "https://t.me/Premium_Jaction/456")
 # =========================================================
 # 💳 PAYMENT SETTINGS
 # =========================================================
-UPI_ID = environ.get("UPI_ID", "Q855940864@ybl")
+UPI_ID = environ.get("UPI_ID", "BHARATPE.9Q0Q0K0Z8Q466572@unitype")
 QR_CODE_IMAGE = environ.get("QR_CODE_IMAGE", "https://image.zaw-myo.workers.dev/image/10735dbf-c841-474d-a253-6c28d984c1a2")
 
 # =========================================================
