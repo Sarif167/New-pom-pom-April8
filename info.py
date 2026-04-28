@@ -55,8 +55,8 @@ PROTECT_CONTENT = str_to_bool(environ.get("PROTECT_CONTENT"), False)
 # 🔢 LIMITS
 # =========================================================
 DAILY_LIMIT = int(environ.get("DAILY_LIMIT", "00"))
-VERIFICATION_DAILY_LIMIT = int(environ.get("VERIFICATION_DAILY_LIMIT", "40"))
-PREMIUM_DAILY_LIMIT = int(environ.get("PREMIUM_DAILY_LIMIT", "80"))
+VERIFICATION_DAILY_LIMIT = int(environ.get("VERIFICATION_DAILY_LIMIT", "30"))
+PREMIUM_DAILY_LIMIT = int(environ.get("PREMIUM_DAILY_LIMIT", "150"))
 
 # =========================================================
 # 🔗 SHORTLINK & VERIFICATION
@@ -72,7 +72,7 @@ TUTORIAL_LINK = environ.get("TUTORIAL_LINK", "https://t.me/Premium_Jaction/456")
 # 💳 PAYMENT SETTINGS
 # =========================================================
 UPI_ID = environ.get("UPI_ID", "BHARATPE.9Q0Q0K0Z8Q466572@unitype")
-QR_CODE_IMAGE = environ.get("QR_CODE_IMAGE", "https://image.zaw-myo.workers.dev/image/10735dbf-c841-474d-a253-6c28d984c1a2")
+QR_CODE_IMAGE = environ.get("QR_CODE_IMAGE", "https://image.zaw-myo.workers.dev/image/d6da2d77-94c6-4f01-a8f9-02230b73ae9a")
 
 # =========================================================
 # 🖼️ IMAGES
