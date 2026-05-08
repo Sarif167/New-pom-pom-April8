@@ -58,6 +58,29 @@ async def start_command(client, message: Message):
         return
 
     # =========================================
+    # PREMIUM PAGE
+    # =========================================
+
+    if argument == "premium":
+
+        buttons = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton(
+                    "💎 Buy 1 Day - ₹5",
+                    callback_data="buy_1day"
+                )
+            ]
+        ])
+
+        return await message.reply_text(
+            "<blockquote>💎 Premium Plans\n\n"
+            "✅ 1 Day Access\n"
+            "✅ Unlimited Files\n"
+            "✅ Instant Access</blockquote>",
+            reply_markup=buttons
+        )
+
+    # =========================================
     # TERMS / HELP / ABOUT
     # =========================================
 
@@ -106,7 +129,7 @@ async def start_command(client, message: Message):
                     [
                         InlineKeyboardButton(
                             "💎 Buy 1 Day Premium",
-                            url="https://t.me/premiumuseronly_Bot"
+                            url="https://t.me/Adultjon1_bot?start=premium"
                         )
                     ]
                 ]
@@ -179,6 +202,31 @@ async def start_command(client, message: Message):
 
         reply_markup=reply_keyboard,
         has_spoiler=True
+    )
+
+
+# =================================================
+# 💎 BUY PREMIUM BUTTON
+# =================================================
+
+@Client.on_callback_query(filters.regex("buy_1day"))
+async def buy_1day_callback(client, query):
+
+    buttons = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton(
+                "💳 Pay Now",
+                url="https://t.me/premiumuseronly_Bot"
+            )
+        ]
+    ])
+
+    await query.message.edit_text(
+        "<blockquote>💎 1 Day Premium Plan\n\n"
+        "💰 Price: ₹5\n"
+        "⏳ Duration: 1 Day\n\n"
+        "After Payment Send Screenshot To Admin.</blockquote>",
+        reply_markup=buttons
     )
 
 
