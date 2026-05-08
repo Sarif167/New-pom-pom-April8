@@ -45,7 +45,7 @@ AUTH_CHANNEL = [int(x) for x in auth_channel_str.split() if x.strip().lstrip("-"
 # =========================================================
 # ⚙️ FEATURES & TOGGLES  (FIXED)
 # =========================================================
-FSUB = str_to_bool(environ.get("FSUB"), True)
+FSUB = str_to_bool(environ.get("FSUB"), False)
 IS_VERIFY = str_to_bool(environ.get("IS_VERIFY"), True)
 POST_SHORTLINK = str_to_bool(environ.get("POST_SHORTLINK"), True)
 SEND_POST = str_to_bool(environ.get("SEND_POST"), True)
@@ -54,7 +54,7 @@ PROTECT_CONTENT = str_to_bool(environ.get("PROTECT_CONTENT"), False)
 # =========================================================
 # 🔢 LIMITS
 # =========================================================
-DAILY_LIMIT = int(environ.get("DAILY_LIMIT", "00"))
+DAILY_LIMIT = int(environ.get("DAILY_LIMIT", "10"))
 VERIFICATION_DAILY_LIMIT = int(environ.get("VERIFICATION_DAILY_LIMIT", "30"))
 PREMIUM_DAILY_LIMIT = int(environ.get("PREMIUM_DAILY_LIMIT", "150"))
 
@@ -91,4 +91,4 @@ WEB_APP_URL = environ.get("WEB_APP_URL", "https://okay-biddy-nasir135-c4c04239.k
 # 👑 EXTRA BUTTON SETTINGS (ADDED)
 # =========================================================
 ADMIN_USERNAME = environ.get("ADMIN_USERNAME", "premiumuseronly_Bot")   # without @
-PREMIUM_LINK = environ.get("PREMIUM_LINK", "https://t.me/yourchannel_or_bot")
+PREMIUM_LINK = environ.get("PREMIUM_LINK", "https://t.me/payment_prime")
