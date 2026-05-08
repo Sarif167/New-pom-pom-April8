@@ -2,14 +2,13 @@ from os import environ
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 from database.users_db import db
-from info import PROTECT_CONTENT, DAILY_LIMIT, PREMIUM_DAILY_LIMIT, VERIFICATION_DAILY_LIMIT, FSUB, IS_VERIFY
+from info import PROTECT_CONTENT, FSUB
 import asyncio
-from plugins.verification import av_x_verification
 from plugins.ban_manager import ban_manager
 from utils import temp, auto_delete_message, is_user_joined
 
 
-@Client.on_message(filters.command("getvideo") | filters.regex(r"(?i)get video"))
+@Client.on_message(filters.command("getvideo") | filters.regex(r"(?i)get file"))
 async def handle_video_request(client, m: Message):
 
     # Safety check
@@ -27,50 +26,13 @@ async def handle_video_request(client, m: Message):
     if await ban_manager.check_ban(client, m):
         return
 
-    # Premium + limit info
-    is_premium = await db.has_premium_access(user_id)
-    current_limit = PREMIUM_DAILY_LIMIT if is_premium else DAILY_LIMIT
-    used = await db.get_video_count(user_id) or 0
-
     # ------------------------------------------------
-    # LIMIT & VERIFICATION & PREMIUM SYSTEM (FIXED)
-    # ------------------------------------------------
-    
-    limit_reached_msg = (
-        f"𝖸𝗈𝗎'𝗏𝖾 𝖱𝖾𝖺𝖼𝗁𝖾𝖽 𝖸𝗈𝗎𝗋 𝖣𝖺𝗂𝗅𝗒 𝖫𝗂𝗆𝗂𝗍 𝖮𝖿 {used} 𝖥𝗂𝗅𝖾𝗌.\n\n"
-        "𝖳𝗋𝗒 𝖠𝗀𝖺𝗂𝗇 𝖳𝗈𝗆𝗈𝗋𝗋𝗈𝗐!\n"
-        "𝖮𝗋 𝖯𝗎𝗋𝖼𝗁𝖺𝗌𝖾 𝖲𝗎𝖻𝗌𝖼𝗋𝗂𝗉𝗍𝗂𝗈𝗇 𝖳𝗈 𝖡𝗈𝗈𝗌𝗍 𝖸𝗈𝗎𝗋 𝖣𝖺𝗂𝗅𝗒 𝖫𝗂𝗆𝗂𝗍"
-    )
-
-    buy_button = InlineKeyboardMarkup([
-        [InlineKeyboardButton("• 𝖯𝗎𝗋𝖼𝗁𝖺𝗌𝖾 𝖲𝗎𝗌𝖼𝗋𝗂𝗉𝗍𝗂𝗈𝗇 •", callback_data="get")]
-    ])
-
-    # 🔥 ALWAYS VERIFY FREE USERS FIRST
-    if not is_premium:
-        if IS_VERIFY:
-            verified = await av_x_verification(client, m)
-            if not verified:
-                return
-
-    # 🔥 LIMIT SYSTEM
-    if is_premium:
-        if used >= PREMIUM_DAILY_LIMIT:
-            return await m.reply(
-                f"𝖸𝗈𝗎'𝗏𝖾 𝖱𝖾𝖺𝖼𝗁𝖾𝖽 𝖸𝗈𝗎𝗋 𝖯𝗋𝖾𝗆𝗂𝗎𝗆 𝖫𝗂𝗆𝗂𝗍 𝖮𝖿 {PREMIUM_DAILY_LIMIT} 𝖥𝗂𝗅𝖾𝗌.\n"
-                f"𝖳𝗋𝗒 𝖠𝗀𝖺𝗂𝗇 𝖳𝗈𝗆𝗈𝗋𝗋𝗈𝗐!"
-            )
-    else:
-        if used >= VERIFICATION_DAILY_LIMIT:
-            return await m.reply(limit_reached_msg, reply_markup=buy_button)
-
-    # ------------------------------------------------
-    # ✅ GET VIDEO (FIXED - SAME VIDEO SEND)
+    # GET VIDEO
     # ------------------------------------------------
 
     file_unique_id = None
 
-    # agar start se specific video aaya hai
+    # Start se specific video
     if m.command and len(m.command) > 1:
         file_unique_id = m.command[1]
 
@@ -83,7 +45,7 @@ async def handle_video_request(client, m: Message):
         video_id = file_data["file_id"]
 
     else:
-        # fallback (manual button)
+        # Random video
         video_id = await db.get_unseen_video(user_id)
 
         if not video_id:
@@ -94,20 +56,24 @@ async def handle_video_request(client, m: Message):
                 return
 
         if not video_id:
-            return await m.reply("❌ No videos found in the database.")
+            return await m.reply("❌ No videos found in database.")
 
     # ------------------------------------------------
     # SEND VIDEO
     # ------------------------------------------------
+
     try:
         sent = await client.send_video(
             chat_id=m.chat.id,
             video=video_id,
             protect_content=PROTECT_CONTENT,
             caption=(
-                f"𝘗𝘰𝘸𝘦𝘳𝘦𝘥 𝘉𝘺: {temp.B_LINK}\n\n"
+                f"𝘗𝘰𝘸𝘦𝘳𝘦𝘥 𝘉𝘺: {temp.B_LINK}
+
+"
                 "<blockquote>"
-                "ᴛʜɪꜱ ꜰɪʟᴇ ᴡɪʟʟ ʙᴇ ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ ᴀꜰᴛᴇʀ 10 ᴍɪɴᴜᴛᴇꜱ.\n"
+                "ᴛʜɪꜱ ꜰɪʟᴇ ᴡɪʟʟ ʙᴇ ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ ᴀꜰᴛᴇʀ 10 ᴍɪɴᴜᴛᴇꜱ.
+"
                 "ᴘʟᴇᴀꜱᴇ ꜰᴏʀᴡᴀʀᴅ ᴛʜɪꜱ ꜰɪʟᴇ ꜱᴏᴍᴇᴡʜᴇʀᴇ ᴇʟꜱᴇ "
                 "ᴏʀ ꜱᴀᴠᴇ ɪɴ ꜱᴀᴠᴇᴅ ᴍᴇꜱꜱᴀɢᴇꜱ."
                 "</blockquote>"
