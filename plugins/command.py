@@ -36,16 +36,8 @@ async def start_command(client, message: Message):
     mention = message.from_user.mention
     me2 = (await client.get_me()).mention
 
-    # =========================================
-    # FORCE SUB CHECK
-    # =========================================
-
     if FSUB and not await is_user_joined(client, message):
         return
-
-    # =========================================
-    # ARGUMENT
-    # =========================================
 
     argument = message.command[1] if len(message.command) > 1 else None
 
@@ -101,7 +93,7 @@ async def start_command(client, message: Message):
         return
 
     # =========================================
-    # REFERRAL SYSTEM
+    # REFERRAL
     # =========================================
 
     if argument and argument.startswith("reff_"):
@@ -121,7 +113,7 @@ async def start_command(client, message: Message):
 
         is_premium = await db.has_premium_access(user_id)
 
-        # ❌ NO PREMIUM
+        # ❌ NOT PREMIUM
         if not is_premium:
 
             buy_button = InlineKeyboardMarkup(
@@ -129,7 +121,7 @@ async def start_command(client, message: Message):
                     [
                         InlineKeyboardButton(
                             "💎 Buy 1 Day Premium",
-                            url="https://t.me/Adultjon1_bot?start=premium"
+                            url="https://t.me/PronWaliZoneBot?start=premium"
                         )
                     ]
                 ]
@@ -151,7 +143,7 @@ async def start_command(client, message: Message):
         return
 
     # =========================================
-    # ADD NEW USER
+    # ADD USER
     # =========================================
 
     if not await db.is_user_exist(user_id):
@@ -176,7 +168,7 @@ async def start_command(client, message: Message):
             pass
 
     # =========================================
-    # MAIN BUTTONS
+    # MAIN BUTTON
     # =========================================
 
     reply_keyboard = ReplyKeyboardMarkup(
@@ -216,17 +208,70 @@ async def buy_1day_callback(client, query):
         [
             InlineKeyboardButton(
                 "💳 Pay Now",
-                url="https://t.me/premiumuseronly_Bot"
+                callback_data="pay_now"
             )
         ]
     ])
 
     await query.message.edit_text(
         "<blockquote>💎 1 Day Premium Plan\n\n"
-        "💰 Price: ₹5\n"
-        "⏳ Duration: 1 Day\n\n"
-        "After Payment Send Screenshot To Admin.</blockquote>",
+        "💰 Price : ₹5\n"
+        "⏳ Duration : 1 Day\n\n"
+        "👇 Click Pay Now To Continue.</blockquote>",
         reply_markup=buttons
+    )
+
+
+# =================================================
+# 💳 PAY NOW
+# =================================================
+
+@Client.on_callback_query(filters.regex("pay_now"))
+async def pay_now_callback(client, query):
+
+    buttons = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton(
+                "📤 Send Screenshot",
+                callback_data="send_ss"
+            )
+        ]
+    ])
+
+    await query.message.reply_photo(
+        photo=QR_CODE_IMAGE,
+
+        caption=f"""<blockquote>
+💎 1 Day Premium Payment
+
+💰 Amount : ₹5
+⏳ Duration : 1 Day
+
+💳 UPI ID :
+<code>{UPI_ID}</code>
+
+⚠️ Payment Karne Ke Baad
+Screenshot Send Kare.
+
+✅ Admin Verify Karega
+Uske Baad Premium Activate Hoga.
+</blockquote>""",
+
+        reply_markup=buttons
+    )
+
+
+# =================================================
+# 📤 SEND SCREENSHOT
+# =================================================
+
+@Client.on_callback_query(filters.regex("send_ss"))
+async def send_ss_callback(client, query):
+
+    await query.message.reply_text(
+        "<blockquote>📤 Ab Payment Screenshot Send Karo.\n\n"
+        "✅ Admin Verify Karne Ke Baad\n"
+        "Aapko 1 Day Premium Mil Jayega.</blockquote>"
     )
 
 
@@ -283,7 +328,7 @@ async def legal_help(client, message: Message):
 
 
 # =================================================
-# 📜 LEGAL TEXT FUNCTION
+# 📜 LEGAL TEXT
 # =================================================
 
 async def send_legal_text(client, message, text):
@@ -307,7 +352,7 @@ async def send_legal_text(client, message, text):
 
 
 # =================================================
-# 📜 ABOUT FUNCTION
+# 📜 ABOUT TEXT
 # =================================================
 
 async def send_about_text(client, message):
