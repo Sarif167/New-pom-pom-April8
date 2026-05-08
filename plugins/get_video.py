@@ -1,6 +1,11 @@
 from os import environ
 from pyrogram import Client, filters
-from pyrogram.types import Message
+from pyrogram.types import (
+    Message,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton
+)
+
 from database.users_db import db
 from info import PROTECT_CONTENT, FSUB
 import asyncio
@@ -27,13 +32,42 @@ async def handle_video_request(client, m: Message):
     if await ban_manager.check_ban(client, m):
         return
 
+    # =========================================
+    # PREMIUM CHECK
+    # =========================================
+
+    is_premium = await db.has_premium_access(user_id)
+
+    if not is_premium:
+
+        buy_button = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        "💎 Buy 1 Day Premium",
+                        url="https://t.me/YOUR_USERNAME"
+                    )
+                ]
+            ]
+        )
+
+        return await m.reply_text(
+            "<blockquote>❌ You Need Premium Access To Get Files.\n\n"
+            "💎 Buy 1 Day Premium First.</blockquote>",
+            reply_markup=buy_button
+        )
+
+    # =========================================
+    # VIDEO SYSTEM
+    # =========================================
+
     file_unique_id = None
 
-    # Deep link support
+    # Deep Link
     if m.command and len(m.command) > 1:
         file_unique_id = m.command[1]
 
-    # Specific file
+    # Specific Video
     if file_unique_id:
 
         file_data = await db.videos.find_one(
@@ -68,7 +102,10 @@ async def handle_video_request(client, m: Message):
                 "❌ No videos available."
             )
 
-    # Send video
+    # =========================================
+    # SEND VIDEO
+    # =========================================
+
     try:
 
         sent = await client.send_video(
@@ -76,20 +113,19 @@ async def handle_video_request(client, m: Message):
             video=video_id,
             protect_content=PROTECT_CONTENT,
 
-            caption=(
-                f"𝘗𝘰𝘸𝘦𝘳𝘦𝘥 𝘉𝘺: {temp.B_LINK}\n\n"
+            caption=f"""𝘗𝘰𝘸𝘦𝘳𝘦𝘥 𝘉𝘺: {temp.B_LINK}
 
-                "<blockquote>"
-                "ᴛʜɪꜱ ꜰɪʟᴇ ᴡɪʟʟ ʙᴇ ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ ᴀꜰᴛᴇʀ 10 ᴍɪɴᴜᴛᴇꜱ.\n"
-                "ᴘʟᴇᴀꜱᴇ ꜰᴏʀᴡᴀʀᴅ ᴛʜɪꜱ ꜰɪʟᴇ ꜱᴏᴍᴇᴡʜᴇʀᴇ ᴇʟꜱᴇ "
-                "ᴏʀ ꜱᴀᴠᴇ ɪɴ ꜱᴀᴠᴇᴅ ᴍᴇꜱꜱᴀɢᴇꜱ."
-                "</blockquote>"
-            ),
+<blockquote>
+ᴛʜɪꜱ ꜰɪʟᴇ ᴡɪʟʟ ʙᴇ ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ ᴀꜰᴛᴇʀ 10 ᴍɪɴᴜᴛᴇꜱ.
+ᴘʟᴇᴀꜱᴇ ꜰᴏʀᴡᴀʀᴅ ᴛʜɪꜱ ꜰɪʟᴇ ꜱᴏᴍᴇᴡʜᴇʀᴇ ᴇʟꜱᴇ
+ᴏʀ ꜱᴀᴠᴇ ɪɴ ꜱᴀᴠᴇᴅ ᴍᴇꜱꜱᴀɢᴇꜱ.
+</blockquote>
+""",
 
             reply_to_message_id=m.id
         )
 
-        # Increase count
+        # Increase Count
         try:
             await db.increase_video_count(
                 user_id,
@@ -98,7 +134,7 @@ async def handle_video_request(client, m: Message):
         except:
             pass
 
-        # Auto delete
+        # Auto Delete
         asyncio.create_task(
             auto_delete_message(m, sent)
         )
