@@ -71,11 +71,11 @@ async def start_command(client, message: Message):
             )
         except Exception:
             pass
-            
+
+    # ✅ ONLY GET FILE BUTTON
     reply_keyboard = ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton("Get Video"), KeyboardButton("Brazzers")],
-            [KeyboardButton("My plan"), KeyboardButton("Subscription")]
+            [KeyboardButton("Get File")]
         ],
         resize_keyboard=True,
         one_time_keyboard=False
@@ -107,7 +107,7 @@ async def legal_about(client, message: Message):
 @Client.on_message(filters.command("help") & filters.private)
 async def legal_hepl(client, message: Message):
     await send_legal_text(client, message, script.HELP_TXT)
-    
+
 async def send_legal_text(client, message, text):
     inline_buttons = [[
         InlineKeyboardButton('• ᴄʟᴏsᴇ •', callback_data='close_data')
@@ -123,29 +123,7 @@ async def send_about_text(client, message):
         InlineKeyboardButton('• ᴄʟᴏsᴇ •', callback_data='close_data')
     ]]
     await message.reply_text(
-        text=script.ABOUT_TXT.format(temp.B_NAME, temp.B_LINK),
+        text=script.ABOUT_TXT,
         reply_markup=InlineKeyboardMarkup(inline_buttons),
         disable_web_page_preview=True
     )
-
-# =========================================================
-# 🔙 CALLBACK QUERY HANDLER
-# =========================================================
-@Client.on_callback_query()
-async def cb_handler(client: Client, query: CallbackQuery):
-    data = query.data
-    user_id = query.from_user.id
-
-    if data == "close_data":
-        await query.message.delete()
-
-    elif data == "get":
-        buttons = [
-            [InlineKeyboardButton('• 𝖢𝗅𝗈𝗌𝖾 •', callback_data='close_data')]
-        ]
-        await query.message.reply_photo(
-            photo=QR_CODE_IMAGE,
-            caption=script.SEENBUY_TXT.format(DAILY_LIMIT, PREMIUM_DAILY_LIMIT, UPI_ID),
-            reply_markup=InlineKeyboardMarkup(buttons),
-            parse_mode=enums.ParseMode.HTML
-        )
