@@ -39,7 +39,7 @@ VIDEO_CHANNEL = int(environ.get("VIDEO_CHANNEL", "-1003876396379"))
 BRAZZER_CHANNEL = int(environ.get("BRAZZER_CHANNEL", "-1002259803190"))
 
 # Auth channels list
-auth_channel_str = environ.get("AUTH_CHANNEL", "-1002682431363")
+auth_channel_str = environ.get("AUTH_CHANNEL", "-1002658797882")
 AUTH_CHANNEL = [int(x) for x in auth_channel_str.split() if x.strip().lstrip("-").isdigit()]
 
 # =========================================================
