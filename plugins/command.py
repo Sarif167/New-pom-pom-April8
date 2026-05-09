@@ -67,7 +67,7 @@ async def payment_screenshot_receive(client, message):
                 [
                     InlineKeyboardButton(
                         "❓ Any Questions",
-                        url="https://t.me/Adultjon1"
+                        url="https://t.me/premiumuseronly_Bot"
                     )
                 ]
             ])
