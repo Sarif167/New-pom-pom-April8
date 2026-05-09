@@ -90,7 +90,7 @@ if argument:
 
     # ✅ PREMIUM USER
     message.text = f"/getvideo {argument}"
-    message.command = ["/getvideo", argument]
+    message.command = ["getvideo", argument]
 
     from plugins.get_video import handle_video_request
 
@@ -113,3 +113,11 @@ if not await db.is_user_exist(user_id):
         await client.send_message(
             LOG_CHANNEL,
             script.LOG_TEXT.format(
+                me2,
+                user_id,
+                mention
+            )
+        )
+
+    except Exception:
+        pass
