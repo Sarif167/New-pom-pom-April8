@@ -2,15 +2,17 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from info import VIDEO_CHANNEL, BRAZZER_CHANNEL, NO_IMG, POST_CHANNEL, POST_SHORTLINK, SEND_POST
 from database.users_db import db
-from utils import temp, get_shortlink, generate_weird_name, generate_thumbnail
+from utils import temp, get_shortlink, generate_thumbnail
 
 # -----------------------
 # BRAZZERS INDEX
 # -----------------------
 @Client.on_message(filters.video & filters.chat(BRAZZER_CHANNEL))
 async def index_brazzers_videos(_, m: Message):
+
     file_id = m.video.file_id
     file_unique_id = m.video.file_unique_id
+
     await db.add_brazzers_video(file_unique_id, file_id)
 
 # -----------------------
@@ -18,14 +20,16 @@ async def index_brazzers_videos(_, m: Message):
 # -----------------------
 @Client.on_message(filters.video & filters.chat(VIDEO_CHANNEL))
 async def index_normal_videos(client, m: Message):
+
     try:
+
         file_id = m.video.file_id
         file_unique_id = m.video.file_unique_id
 
-        # 🔥 Weird random name
-        file_name = generate_weird_name() + ".mp4"
+        # ORIGINAL FILE NAME
+        file_name = m.video.file_name
 
-        # DB
+        # DB SAVE
         status = await db.add_video(file_unique_id, file_id)
 
         if status:
@@ -33,18 +37,18 @@ async def index_normal_videos(client, m: Message):
         else:
             print(f"♻️ Duplicate Found: {file_name}")
 
-        # SEND_POST check
+        # SEND_POST CHECK
         if not SEND_POST:
             return
 
-        # Bot username cache
+        # BOT USERNAME
         if not temp.U_NAME:
             me = await client.get_me()
             temp.U_NAME = me.username
 
         link = f"https://t.me/{temp.U_NAME}?start={file_unique_id}"
 
-        # Shortlink
+        # SHORTLINK
         if POST_SHORTLINK:
             try:
                 shortlink = await get_shortlink(link)
@@ -54,54 +58,85 @@ async def index_normal_videos(client, m: Message):
         else:
             shortlink = link
 
-        caption = (
-            f"<b>{file_name}</b>\n\n"
-            f"<i>Click the button below to watch the video.</i>"
+        # CLEAN FILE NAME
+        clean_name = (
+            file_name
+            .replace(".", " ")
+            .replace("_", " ")
+            .replace("1080p", "")
+            .replace("720p", "")
+            .replace("480p", "")
+            .replace("WEB-DL", "")
+            .replace("HDRip", "")
+            .replace("BluRay", "")
         )
 
+        # CAPTION
+        caption = (
+            f"🎬 <b>{clean_name}</b>\n\n"
+            f"⭐ IMDb: 8.5\n"
+            f"📥 Paid Content\n\n"
+            f"<i>Click below button to buy this file.</i>"
+        )
+
+        # BUTTON
         btn = InlineKeyboardMarkup([
-    [InlineKeyboardButton("📂 ɢᴇᴛ ᴠɪᴅᴇᴏ 📂", url=link)]
-])
+            [
+                InlineKeyboardButton(
+                    "💳 Buy File",
+                    url=link
+                )
+            ]
+        ])
 
         # -----------------------
-        # THUMBNAIL SYSTEM (FIXED)
+        # THUMBNAIL SYSTEM
         # -----------------------
         thumb_to_send = NO_IMG
 
         try:
-            # 1️⃣ Telegram thumbnail → download → send as photo
+
+            # TELEGRAM THUMB
             if m.video.thumbs:
+
                 thumb_file = await client.download_media(
                     m.video.thumbs[0].file_id
                 )
+
                 if thumb_file:
                     thumb_to_send = thumb_file
 
             else:
-                # 2️⃣ Generate from video
+
+                # GENERATE THUMB
                 video_path = await m.download()
+
                 gen_thumb = await generate_thumbnail(video_path)
 
                 if gen_thumb:
                     thumb_to_send = gen_thumb
 
         except Exception as e:
-            print("Thumbnail handling error:", e)
+            print("Thumbnail Error:", e)
 
         # -----------------------
         # SEND POST
         # -----------------------
         try:
+
             await client.send_photo(
                 chat_id=POST_CHANNEL,
                 photo=thumb_to_send,
                 caption=caption,
                 reply_markup=btn
             )
-            print("📸 Post sent with thumbnail")
+
+            print("📸 Post Sent Successfully")
 
         except Exception as e:
-            print("⚠️ Thumb failed, sending NO_IMG:", e)
+
+            print("⚠️ Thumbnail Failed:", e)
+
             await client.send_photo(
                 chat_id=POST_CHANNEL,
                 photo=NO_IMG,
