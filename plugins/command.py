@@ -128,11 +128,15 @@ if not await db.is_user_exist(user_id):
         print(f"Log Error: {e}")
 
 
+
 # =========================================
 # BUY 1 DAY CALLBACK FIX
 # =========================================
 
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import MessageNotModified
+
 
 @Client.on_callback_query(filters.regex("buy_1day"))
 async def buy_1day_callback(client, query):
