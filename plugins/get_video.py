@@ -45,7 +45,7 @@ async def handle_video_request(client, m: Message):
                 [
                     InlineKeyboardButton(
                         "💎 Buy 1 Day Premium",
-                        url="https://t.me/YOUR_USERNAME"
+                        url="https://t.me/Adultjon1_bot?start=premium"
                     )
                 ]
             ]
