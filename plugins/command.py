@@ -121,7 +121,7 @@ async def start_command(client, message: Message):
                     [
                         InlineKeyboardButton(
                             "💎 Buy 1 Day Premium",
-                            url="https://t.me/PronWaliZoneBot?start=premium"
+                            url="https://t.me/Adultjon1_bot?start=premium"
                         )
                     ]
                 ]
