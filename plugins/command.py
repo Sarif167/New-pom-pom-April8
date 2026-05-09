@@ -31,7 +31,7 @@ if argument == "premium":
 # TERMS / HELP / ABOUT
 # =========================================
 
-if argument == "terms":
+elif argument == "terms":
     await send_legal_text(client, message, script.TERMS_TXT)
     return
 
@@ -51,7 +51,7 @@ elif argument == "about":
 # REFERRAL
 # =========================================
 
-if argument and argument.startswith("reff_"):
+elif argument and argument.startswith("reff_"):
 
     try:
         await refer_on_start(client, message)
@@ -64,7 +64,7 @@ if argument and argument.startswith("reff_"):
 # PREMIUM PROTECTED FILE ACCESS
 # =========================================
 
-if argument:
+elif argument:
 
     is_premium = await db.has_premium_access(user_id)
 
@@ -138,7 +138,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import MessageNotModified
 
 
-@Client.on_callback_query(filters.regex("buy_1day"))
+@Client.on_callback_query(filters.regex("^buy_1day$"))
 async def buy_1day_callback(client, query):
 
     buttons = InlineKeyboardMarkup([
@@ -160,24 +160,17 @@ async def buy_1day_callback(client, query):
 
     try:
 
-        current_text = query.message.text or ""
-
-        if current_text != text:
-
-            await query.message.edit_text(
-                text=text,
-                reply_markup=buttons
-            )
-
-        else:
-
-            await query.answer(
-                "Already Opened ✅",
-                show_alert=False
-            )
+        await query.message.edit_text(
+            text=text,
+            reply_markup=buttons
+        )
 
     except MessageNotModified:
-        pass
+
+        await query.answer(
+            "Already Opened ✅",
+            show_alert=False
+        )
 
     except Exception as e:
         print(f"Buy 1 Day Error: {e}")
