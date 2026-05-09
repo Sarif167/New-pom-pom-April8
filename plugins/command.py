@@ -94,7 +94,12 @@ if argument:
 
     from plugins.get_video import handle_video_request
 
-    await handle_video_request(client, message)
+    try:
+        await handle_video_request(client, message)
+
+    except Exception as e:
+        print(f"Video Request Error: {e}")
+
     return
 
 # =========================================
@@ -119,5 +124,56 @@ if not await db.is_user_exist(user_id):
             )
         )
 
-    except Exception:
+    except Exception as e:
+        print(f"Log Error: {e}")
+
+
+# =========================================
+# BUY 1 DAY CALLBACK FIX
+# =========================================
+
+from pyrogram.errors import MessageNotModified
+
+@Client.on_callback_query(filters.regex("buy_1day"))
+async def buy_1day_callback(client, query):
+
+    buttons = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton(
+                "💳 Pay Now",
+                url="https://t.me/Adultjon1_bot?start=premium"
+            )
+        ]
+    ])
+
+    text = (
+        "<blockquote>💎 1 Day Premium Plan\n\n"
+        "💰 Price: ₹5\n"
+        "⏳ Validity: 1 Day\n"
+        "📥 Unlimited File Access\n\n"
+        "Click Below To Buy.</blockquote>"
+    )
+
+    try:
+
+        current_text = query.message.text or ""
+
+        if current_text != text:
+
+            await query.message.edit_text(
+                text=text,
+                reply_markup=buttons
+            )
+
+        else:
+
+            await query.answer(
+                "Already Opened ✅",
+                show_alert=False
+            )
+
+    except MessageNotModified:
         pass
+
+    except Exception as e:
+        print(f"Buy 1 Day Error: {e}")
