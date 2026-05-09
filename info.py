@@ -73,8 +73,6 @@ TUTORIAL_LINK = environ.get("TUTORIAL_LINK", "https://t.me/Premium_Jaction/456")
 # =========================================================
 UPI_ID = environ.get("UPI_ID", "BHARATPE.9Q0Q0K0Z8Q466572@unitype")
 
-SCREENSHOT_CHANNEL = -1002813745328
-
 QR_CODE_IMAGE = environ.get("QR_CODE_IMAGE", "https://image.zaw-myo.workers.dev/image/d6da2d77-94c6-4f01-a8f9-02230b73ae9a")
 
 # =========================================================
