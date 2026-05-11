@@ -29,8 +29,14 @@ async def start(client, message):
         buttons = InlineKeyboardMarkup([
             [
                 InlineKeyboardButton(
-                    "💎 Buy 1 Day - ₹5",
+                    "💳 Buy 1 Day - ₹5",
                     callback_data="buy_1day"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    "🔥 Premium Features",
+                    callback_data="premium_features"
                 )
             ],
             [
@@ -140,7 +146,7 @@ async def start(client, message):
         [
             InlineKeyboardButton(
                 "💎 Buy Premium",
-                callback_data="buy_1day"
+                url="https://t.me/Adultjon1_bot?start=premium"
             )
         ]
     ])
@@ -165,6 +171,12 @@ async def buy_1day_callback(client, query):
                 "💳 Pay Now",
                 url="https://t.me/Adultjon1_bot?start=premium"
             )
+        ],
+        [
+            InlineKeyboardButton(
+                "🔥 Premium Features",
+                callback_data="premium_features"
+            )
         ]
     ])
 
@@ -172,7 +184,9 @@ async def buy_1day_callback(client, query):
         "<blockquote>💎 1 Day Premium Plan\n\n"
         "💰 Price: ₹5\n"
         "⏳ Validity: 1 Day\n"
-        "📥 Unlimited File Access\n\n"
+        "📥 Unlimited File Access\n"
+        "⚡ Fast Download\n"
+        "🔓 Premium Locked Files Access\n\n"
         "Click Below To Buy.</blockquote>"
     )
 
@@ -192,3 +206,41 @@ async def buy_1day_callback(client, query):
 
     except Exception as e:
         print(f"Buy 1 Day Error: {e}")
+
+
+# =========================================
+# PREMIUM FEATURES CALLBACK
+# =========================================
+
+@Client.on_callback_query(filters.regex("^premium_features$"))
+async def premium_features(client, query):
+
+    text = (
+        "<blockquote>🔥 Premium Features\n\n"
+        "✅ Unlimited File Access\n"
+        "✅ No Daily Limit\n"
+        "✅ Instant Delivery\n"
+        "✅ Premium Locked Content\n"
+        "✅ Fast Server Speed\n"
+        "✅ 24x7 Access\n\n"
+        "💎 Buy Premium To Unlock All Features.</blockquote>"
+    )
+
+    buttons = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton(
+                "💎 Buy Now",
+                url="https://t.me/Adultjon1_bot?start=premium"
+            )
+        ]
+    ])
+
+    try:
+
+        await query.message.edit_text(
+            text=text,
+            reply_markup=buttons
+        )
+
+    except Exception as e:
+        print(e)
