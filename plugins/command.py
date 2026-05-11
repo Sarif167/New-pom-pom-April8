@@ -30,7 +30,7 @@ async def start(client, message):
             [
                 InlineKeyboardButton(
                     "💳 Buy 1 Day - ₹5",
-                    callback_data="buy_1day"
+                    url="https://t.me/Adultjon1_bot?start=buy"
                 )
             ],
             [
@@ -54,6 +54,16 @@ async def start(client, message):
             "✅ Instant Access</blockquote>",
             reply_markup=buttons
         )
+
+    # =========================================
+    # BUY PAGE DIRECT OPEN
+    # =========================================
+
+    elif argument == "buy":
+
+        from plugins.premium import buy_handler
+
+        return await buy_handler(client, message)
 
     # =========================================
     # TERMS / HELP / ABOUT
@@ -168,7 +178,7 @@ async def buy_1day_callback(client, query):
     buttons = InlineKeyboardMarkup([
         [
             InlineKeyboardButton(
-                "💳 Pay Now",
+                "💳 Open Payment Page",
                 url="https://t.me/Adultjon1_bot?start=buy"
             )
         ],
@@ -187,7 +197,7 @@ async def buy_1day_callback(client, query):
         "📥 Unlimited File Access\n"
         "⚡ Fast Download\n"
         "🔓 Premium Locked Files Access\n\n"
-        "Click Below To Buy.</blockquote>"
+        "👇 Click Below To Open Payment Page.</blockquote>"
     )
 
     try:
