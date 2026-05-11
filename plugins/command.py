@@ -101,7 +101,7 @@ async def start(client, message):
                     [
                         InlineKeyboardButton(
                             "💎 Buy 1 Day Premium",
-                            url="https://t.me/Adultjon1_bot?start=premium"
+                            url="https://t.me/Adultjon1_bot?start=buy"
                         )
                     ]
                 ]
@@ -146,7 +146,7 @@ async def start(client, message):
         [
             InlineKeyboardButton(
                 "💎 Buy Premium",
-                url="https://t.me/Adultjon1_bot?start=premium"
+                url="https://t.me/Adultjon1_bot?start=buy"
             )
         ]
     ])
@@ -169,7 +169,7 @@ async def buy_1day_callback(client, query):
         [
             InlineKeyboardButton(
                 "💳 Pay Now",
-                url="https://t.me/Adultjon1_bot?start=premium"
+                url="https://t.me/Adultjon1_bot?start=buy"
             )
         ],
         [
