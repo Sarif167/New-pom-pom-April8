@@ -41,7 +41,7 @@ async def start(client, message):
             ],
             [
                 InlineKeyboardButton(
-                    "🛠 Admin Help",
+                    "👑 Admin",
                     url="https://t.me/premiumuseronly_Bot"
                 )
             ]
@@ -51,7 +51,10 @@ async def start(client, message):
             "<blockquote>💎 Premium Plans\n\n"
             "✅ 1 Day Access\n"
             "✅ Unlimited Files\n"
-            "✅ Instant Access</blockquote>",
+            "✅ Instant Access\n"
+            "✅ Premium Locked Content\n"
+            "✅ Fast Download Speed\n\n"
+            "🔥 Best Premium Experience Available.</blockquote>",
             reply_markup=buttons
         )
 
@@ -113,13 +116,20 @@ async def start(client, message):
                             "💎 Buy 1 Day Premium",
                             url="https://t.me/Adultjon1_bot?start=buy"
                         )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            "👑 Admin",
+                            url="https://t.me/premiumuseronly_Bot"
+                        )
                     ]
                 ]
             )
 
             return await message.reply_text(
                 "<blockquote>❌ You Need Premium Access To Access This File.\n\n"
-                "💎 Buy 1 Day Premium First.</blockquote>",
+                "💎 Buy 1 Day Premium First.\n"
+                "⚡ Get Instant Unlimited Access.</blockquote>",
                 reply_markup=buy_button
             )
 
@@ -158,12 +168,21 @@ async def start(client, message):
                 "💎 Buy Premium",
                 url="https://t.me/Adultjon1_bot?start=buy"
             )
+        ],
+        [
+            InlineKeyboardButton(
+                "👑 Admin",
+                url="https://t.me/premiumuseronly_Bot"
+            )
         ]
     ])
 
     await message.reply_text(
         "<blockquote>👋 Welcome To Premium Bot\n\n"
-        "💎 Buy Premium To Access Files.</blockquote>",
+        "🚀 Get Premium Access To Unlock Unlimited Files.\n"
+        "⚡ Fast Download Speed & Instant Delivery.\n"
+        "🔓 Access Premium Locked Content Easily.\n\n"
+        "💎 Buy Premium To Enjoy All Features.</blockquote>",
         reply_markup=buttons
     )
 
@@ -187,6 +206,12 @@ async def buy_1day_callback(client, query):
                 "🔥 Premium Features",
                 callback_data="premium_features"
             )
+        ],
+        [
+            InlineKeyboardButton(
+                "👑 Admin",
+                url="https://t.me/premiumuseronly_Bot"
+            )
         ]
     ])
 
@@ -196,7 +221,8 @@ async def buy_1day_callback(client, query):
         "⏳ Validity: 1 Day\n"
         "📥 Unlimited File Access\n"
         "⚡ Fast Download\n"
-        "🔓 Premium Locked Files Access\n\n"
+        "🔓 Premium Locked Files Access\n"
+        "🔥 Instant Delivery\n\n"
         "👇 Click Below To Open Payment Page.</blockquote>"
     )
 
@@ -228,11 +254,20 @@ async def premium_features(client, query):
     text = (
         "<blockquote>🔥 Premium Features\n\n"
         "✅ Unlimited File Access\n"
-        "✅ No Daily Limit\n"
-        "✅ Instant Delivery\n"
-        "✅ Premium Locked Content\n"
-        "✅ Fast Server Speed\n"
-        "✅ 24x7 Access\n\n"
+        "✅ No Daily Download Limit\n"
+        "✅ Instant File Delivery\n"
+        "✅ Access Premium Locked Content\n"
+        "✅ Ultra Fast Server Speed\n"
+        "✅ 24x7 Non-Stop Access\n"
+        "✅ Auto Verified Access\n"
+        "✅ Priority Support\n"
+        "✅ Latest Movies & Series First\n"
+        "✅ Ads Free Experience\n\n"
+        "⚡ Why Choose Our Bot?\n"
+        "• Easy To Use Interface\n"
+        "• Safe & Secure Downloads\n"
+        "• Daily New Content Updates\n"
+        "• High Quality Files Available\n\n"
         "💎 Buy Premium To Unlock All Features.</blockquote>"
     )
 
@@ -241,6 +276,12 @@ async def premium_features(client, query):
             InlineKeyboardButton(
                 "💎 Buy Now",
                 url="https://t.me/Adultjon1_bot?start=buy"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "👑 Admin",
+                url="https://t.me/premiumuseronly_Bot"
             )
         ]
     ])
