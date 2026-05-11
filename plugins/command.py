@@ -230,7 +230,7 @@ async def premium_features(client, query):
         [
             InlineKeyboardButton(
                 "💎 Buy Now",
-                url="https://t.me/Adultjon1_bot?start=premium"
+                url="https://t.me/Adultjon1_bot?start=buy"
             )
         ]
     ])
