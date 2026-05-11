@@ -93,33 +93,86 @@ async def buy_handler(client, message: Message):
 # -------------------------------------------------------------------------
 @Client.on_message(filters.photo & filters.private)
 async def payment_screenshot_handler(client, message: Message):
+
     user_id = message.from_user.id
     user_name = message.from_user.mention
     user_note = message.caption if message.caption else "No caption provided"
-    msg = await message.reply_text("🔄 𝘚𝘦𝘯𝘥𝘪𝘯𝘨 𝘱𝘢𝘺𝘮𝘦𝘯𝘵 𝘴𝘤𝘳𝘦𝘦𝘯𝘴𝘩𝘰𝘵 𝘵𝘰 𝘈𝘥𝘮𝘪𝘯𝘴... 𝘗𝘭𝘦𝘢𝘴𝘦 𝘸𝘢𝘪𝘵.")
+
+    processing = await message.reply_text(
+        "🔄 𝘚𝘦𝘯𝘥𝘪𝘯𝘨 𝘱𝘢𝘺𝘮𝘦𝘯𝘵 𝘴𝘤𝘳𝘦𝘦𝘯𝘴𝘩𝘰𝘵 𝘵𝘰 𝘈𝘥𝘮𝘪𝘯𝘴... 𝘗𝘭𝘦𝘢𝘴𝘦 𝘸𝘢𝘪𝘵."
+    )
+
     admin_btns = InlineKeyboardMarkup([
         [
-            InlineKeyboardButton("✅ Approve (1 Day)", callback_data=f"add_prem_{user_id}_1"),
-            InlineKeyboardButton("✅ Approve (1 Week)", callback_data=f"add_prem_{user_id}_7")
+            InlineKeyboardButton(
+                "✅ Approve (1 Day)",
+                callback_data=f"add_prem_{user_id}_1"
+            ),
+            InlineKeyboardButton(
+                "✅ Approve (1 Week)",
+                callback_data=f"add_prem_{user_id}_7"
+            )
         ],
         [
-            InlineKeyboardButton("✅ Approve (1 Month)", callback_data=f"add_prem_{user_id}_30")
+            InlineKeyboardButton(
+                "✅ Approve (1 Month)",
+                callback_data=f"add_prem_{user_id}_30"
+            )
         ],
         [
-            InlineKeyboardButton("❌ Reject", callback_data=f"reject_pay_{user_id}")
+            InlineKeyboardButton(
+                "❌ Reject",
+                callback_data=f"reject_pay_{user_id}"
+            )
         ]
     ])
-    
+
     try:
+
         await client.send_photo(
             chat_id=PREMIUM_LOGS,
             photo=message.photo.file_id,
-            caption=f"🧾 **New Payment Screenshot**\n\n👤 <b>User:</b> {user_name}\n🆔 <b>ID:</b> <code>{user_id}</code>\n📝 <b>Note:</b> {user_note}",
+            caption=(
+                f"🧾 <b>New Payment Screenshot</b>\n\n"
+                f"👤 <b>User:</b> {user_name}\n"
+                f"🆔 <b>ID:</b> <code>{user_id}</code>\n"
+                f"📝 <b>Note:</b> {user_note}"
+            ),
             reply_markup=admin_btns
         )
-        await msg.edit_text("✅ 𝘚𝘤𝘳𝘦𝘦𝘯𝘴𝘩𝘰𝘵 𝘴𝘦𝘯𝘵!\n𝘈𝘥𝘮𝘪𝘯 𝘸𝘪𝘭𝘭 𝘷𝘦𝘳𝘪𝘧𝘺 𝘢𝘯𝘥 𝘢𝘤𝘵𝘪𝘷𝘢𝘵𝘦 𝘺𝘰𝘶𝘳 𝘱𝘭𝘢𝘯 𝘴𝘩𝘰𝘳𝘵𝘭𝘺.")
+
+        # SAFE EDIT
+        try:
+
+            await processing.edit_text(
+                "✅ 𝘚𝘤𝘳𝘦𝘦𝘯𝘴𝘩𝘰𝘵 𝘴𝘦𝘯𝘵!\n"
+                "𝘈𝘥𝘮𝘪𝘯 𝘸𝘪𝘭𝘭 𝘷𝘦𝘳𝘪𝘧𝘺 "
+                "𝘢𝘯𝘥 𝘢𝘤𝘵𝘪𝘷𝘢𝘵𝘦 "
+                "𝘺𝘰𝘶𝘳 𝘱𝘭𝘢𝘯 𝘴𝘩𝘰𝘳𝘵𝘭𝘺."
+            )
+
+        except:
+
+            await message.reply_text(
+                "✅ Screenshot Sent Successfully!\n"
+                "Admin Will Verify Soon."
+            )
+
     except Exception as e:
-        await msg.edit_text(f"❌ Error sending to admin: {e}")
+
+        print(f"Payment Screenshot Error: {e}")
+
+        try:
+
+            await processing.edit_text(
+                f"❌ Error Sending To Admin:\n{e}"
+            )
+
+        except:
+
+            await message.reply_text(
+                f"❌ Error Sending To Admin:\n{e}"
+        )
 
 # -------------------------------------------------------------------------
 # ✅ APPROVE PAYMENT CALLBACK
