@@ -56,7 +56,7 @@ PROTECT_CONTENT = str_to_bool(environ.get("PROTECT_CONTENT"), False)
 # =========================================================
 DAILY_LIMIT = int(environ.get("DAILY_LIMIT", "10"))
 VERIFICATION_DAILY_LIMIT = int(environ.get("VERIFICATION_DAILY_LIMIT", "30"))
-PREMIUM_DAILY_LIMIT = int(environ.get("PREMIUM_DAILY_LIMIT", "150"))
+PREMIUM_DAILY_LIMIT = int(environ.get("PREMIUM_DAILY_LIMIT", "250"))
 
 # =========================================================
 # 🔗 SHORTLINK & VERIFICATION
