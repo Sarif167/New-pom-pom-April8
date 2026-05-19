@@ -32,26 +32,26 @@ async def av_x_verification(client, message):
     if not IS_VERIFY:
         return True
 
+    # =====================================================
     # 24 HOURS CHECK
+    # =====================================================
     user_data = await db.get_user(user_id)
-    last_verified = user_data.get("last_verified") if user_data else None
 
-    if last_verified:
-        ist = pytz.timezone(TIMEZONE)
-        now = datetime.now(ist)
+    if user_data:
+        last_verified = user_data.get("last_verified")
+        is_verified = user_data.get("is_verified", False)
 
-        # VERIFIED WITHIN 24 HOURS
-        if (now - last_verified) < timedelta(hours=24):
-            return True
+        if last_verified and is_verified:
+            ist = pytz.timezone(TIMEZONE)
+            now = datetime.now(ist)
 
-    # BACKUP CHECK
-    user_verified = await db.is_user_verified(user_id)
-    if user_verified:
-        return True
+            # VERIFIED WITHIN 24 HOURS
+            if (now - last_verified) < timedelta(hours=24):
+                return True
 
-    # =========================================================
+    # =====================================================
     # GENERATE VERIFY LINK
-    # =========================================================
+    # =====================================================
     file_id = None
 
     if message.command and len(message.command) > 1:
@@ -191,11 +191,14 @@ async def verify_user_on_start(client, message):
         ist = pytz.timezone(TIMEZONE)
         current_time = datetime.now(tz=ist)
 
-        # SAVE VERIFIED TIME
+        # =====================================================
+        # SAVE VERIFIED STATUS
+        # =====================================================
         await db.update_notcopy_user(
             user_id,
             {
-                "last_verified": current_time
+                "last_verified": current_time,
+                "is_verified": True
             }
         )
 
