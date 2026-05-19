@@ -54,8 +54,8 @@ PROTECT_CONTENT = str_to_bool(environ.get("PROTECT_CONTENT"), False)
 # =========================================================
 # 🔢 LIMITS
 # =========================================================
-DAILY_LIMIT = int(environ.get("DAILY_LIMIT", "10"))
-VERIFICATION_DAILY_LIMIT = int(environ.get("VERIFICATION_DAILY_LIMIT", "30"))
+DAILY_LIMIT = int(environ.get("DAILY_LIMIT", "15"))
+VERIFICATION_DAILY_LIMIT = int(environ.get("VERIFICATION_DAILY_LIMIT", "60"))
 PREMIUM_DAILY_LIMIT = int(environ.get("PREMIUM_DAILY_LIMIT", "250"))
 
 # =========================================================
