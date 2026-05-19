@@ -1,8 +1,8 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from info import VIDEO_CHANNEL, BRAZZER_CHANNEL, NO_IMG, POST_CHANNEL, POST_SHORTLINK, SEND_POST
+from info import VIDEO_CHANNEL, BRAZZER_CHANNEL, NO_IMG, POST_CHANNEL, SEND_POST
 from database.users_db import db
-from utils import temp, get_shortlink, generate_weird_name, generate_thumbnail
+from utils import temp, generate_weird_name, generate_thumbnail
 
 # -----------------------
 # BRAZZERS INDEX
@@ -42,43 +42,40 @@ async def index_normal_videos(client, m: Message):
             me = await client.get_me()
             temp.U_NAME = me.username
 
-        link = f"https://t.me/{temp.U_NAME}?start=avx-{file_unique_id}"
-
-        # Shortlink
-        if POST_SHORTLINK:
-            try:
-                shortlink = await get_shortlink(link)
-            except Exception as e:
-                print("Shortlink Error:", e)
-                shortlink = link
-        else:
-            shortlink = link
+        # -----------------------
+        # DIRECT BOT LINK
+        # -----------------------
+        btn = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton(
+                    "📂 ɢᴇᴛ ᴠɪᴅᴇᴏ 📂",
+                    url=f"https://t.me/{temp.U_NAME}?start=avx-{file_unique_id}"
+                )
+            ]
+        ])
 
         caption = (
             f"<b>{file_name}</b>\n\n"
             f"<i>Click the button below to watch the video.</i>"
         )
 
-        btn = InlineKeyboardMarkup([
-            [InlineKeyboardButton("📂 ɢᴇᴛ ᴠɪᴅᴇᴏ 📂", url=shortlink)]
-        ])
-
         # -----------------------
-        # THUMBNAIL SYSTEM (FIXED)
+        # THUMBNAIL SYSTEM
         # -----------------------
         thumb_to_send = NO_IMG
 
         try:
-            # 1️⃣ Telegram thumbnail → download → send as photo
+            # Telegram thumbnail
             if m.video.thumbs:
                 thumb_file = await client.download_media(
                     m.video.thumbs[0].file_id
                 )
+
                 if thumb_file:
                     thumb_to_send = thumb_file
 
             else:
-                # 2️⃣ Generate from video
+                # Generate thumbnail
                 video_path = await m.download()
                 gen_thumb = await generate_thumbnail(video_path)
 
@@ -98,10 +95,12 @@ async def index_normal_videos(client, m: Message):
                 caption=caption,
                 reply_markup=btn
             )
+
             print("📸 Post sent with thumbnail")
 
         except Exception as e:
             print("⚠️ Thumb failed, sending NO_IMG:", e)
+
             await client.send_photo(
                 chat_id=POST_CHANNEL,
                 photo=NO_IMG,
