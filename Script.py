@@ -30,8 +30,8 @@ class script(object):
     ABOUT_TXT = """╔════❰ {} ❱══════❍
 ║╭━━━━━━━━━━━━━━━━━━➣
 ║┣⪼🤖 𝖬𝗒 𝖭𝖺𝗆𝖾 : {}
-║┣⪼👦 𝖣𝖾𝗏𝖾𝗅𝗈𝗉𝖾𝗋 : <a href='https://t.me/premiumuseronly_Bot'>𝖣𝖾𝗏𝖾𝗅𝗈𝗉𝖾𝗋</a>
-║┣⪼❣️ 𝖴𝗉𝖽𝖺𝗍𝖾 : <a href='https://t.me/premiumuseronly_Bot'>𝖯𝖶𝖹𝗈𝗇𝖾</a>
+║┣⪼👦 𝖣𝖾𝗏𝖾𝗅𝗈𝗉𝖾𝗋 : <a href='https://t.me/AV_OWNER_BOT'>𝖠𝗆𝖺𝗇 𝖣𝖾𝗏𝖾𝗅𝗈𝗉𝖾𝗋</a>
+║┣⪼❣️ 𝖴𝗉𝖽𝖺𝗍𝖾 : <a href='https://t.me/PronWaliZone'>𝖯𝖶𝖹𝗈𝗇𝖾</a>
 ║┣⪼📡 𝖧𝗈𝗌𝗍𝖾𝖽 𝖮𝗇 : 𝖪𝗈𝗒𝖾𝖻 
 ║┣⪼🗣️ 𝖫𝖺𝗇𝗀𝗎𝖺𝗀𝖾 : 𝖯𝗒𝗍𝗁𝗈𝗇 
 ║┣⪼📚 𝖫𝗂𝖻𝗋𝖺𝗋𝗒 : 𝖯𝗒𝗋𝗈𝗀𝗋𝖺𝗆
@@ -93,30 +93,24 @@ class script(object):
     SEENBUY_TXT = """💎 𝖯𝗋𝖾𝗆𝗂𝗎𝗆 𝖲𝗎𝖻𝗌𝖼𝗋𝗂𝗉𝗍𝗂𝗈𝗇 𝖯𝗅𝖺𝗇𝗌
 
 💸 𝖯𝗋𝗂𝖼𝗂𝗇𝗀:
-🔹 1 Day: ₹5
-🔹 7 Day: ₹30
-🔹 1 𝖬𝗈𝗇𝗍𝗁: ₹100
+🔹 1 𝖣𝖺𝗒: ₹10
+🔹 1 𝖶𝖾𝖾𝗄: ₹50
+🔹 1 𝖬𝗈𝗇𝗍𝗁: ₹150
 
 ♻️ 𝖡𝖾𝗇𝖾𝖿𝗂𝗍𝗌:
 ✅ 𝖣𝖺𝗂𝗅𝗒 𝖫𝗂𝗆𝗂𝗍: {1} 𝖥𝗂𝗅𝖾𝗌 (𝖵𝗌 {0} 𝖥𝗋𝖾𝖾)
-✅ 𝖯𝗋𝖾𝗆𝗂𝗎𝗆 𝗅𝖾𝗇𝖺 𝗁𝖺𝗂 𝗍𝗈 𝖾𝗑𝗍𝗋𝖺 𝖻𝖾𝗇𝖾𝖿𝗂𝗍𝗌 𝗆𝗂𝗅𝖾𝗇𝗀𝖾 😉
 ✅ 𝖭𝗈 𝖳𝗂𝗆𝖾 𝖦𝖺𝗉
 ✅ 𝖠𝖼𝖼𝖾𝗌𝗌 𝗍𝗈 𝖯𝗋𝖾𝗆𝗂𝗎𝗆 𝖢𝗈𝗇𝗍𝖾𝗇𝗍
 ✅ 𝖧𝗂𝗀𝗁 𝖲𝗉𝖾𝖾𝖽
-✅ Fast Server Speed
-✅24x7 Access
-💎 Buy Premium To Unlock All Features
 
-💳 Payment kaise kare?
+💳 𝖧𝗈𝗐 𝗍𝗈 𝖯𝖺𝗒?
+1️⃣ 𝖲𝖼𝖺𝗇 𝗍𝗁𝖾 𝖰𝖱 𝖢𝗈𝖽𝖾 𝖺𝖻𝗈𝗏𝖾 𝗈𝗋 𝗎𝗌𝖾 𝖴𝖯𝖨 𝖨𝖣: <code>{2}</code>
+2️⃣ 𝖳𝖺𝗄𝖾 𝖺 𝖲𝖼𝗋𝖾𝖾𝗇𝗌𝗁𝗈𝗍 𝗈𝖿 𝗌𝗎𝖼𝖼𝖾𝗌𝗌𝖿𝗎𝗅 𝗉𝖺𝗒𝗆𝖾𝗇𝗍.
+3️⃣ 𝖲𝖾𝗇𝖽 𝗍𝗁𝖾 𝖲𝖼𝗋𝖾𝖾𝗇𝗌𝗁𝗈𝗍 𝖧𝖤𝖱𝖤 𝗐𝗂𝗍𝗁 𝗍𝗁𝖾 𝖼𝖺𝗉𝗍𝗂𝗈𝗇 "𝖻𝗎𝗒".
 
-1️⃣ Scan the QR Code above ya UPI ID use kare: <code>{2}</code>
-2️⃣ Successful payment ka screenshot le.
-3️⃣ Screenshot yaha send kare caption ke saath "/buy".
-📣 Addmin @premiumuseronly_Bot.
+⚠️ 𝖶𝖺𝗂𝗍 𝖿𝗈𝗋 5-10 𝗆𝗂𝗇𝗌 𝖺𝖿𝗍𝖾𝗋 𝗌𝖾𝗇𝖽𝗂𝗇𝗀 𝗌𝖼𝗋𝖾𝖾𝗇𝗌𝗁𝗈𝗍 𝖿𝗈𝗋 𝖺𝗉𝗉𝗋𝗈𝗏𝖺𝗅."""
 
-⚠️ Screenshot bhejne ke baad 5-10 mins wait kare approval ke liye.."""
-
-    VERIFICATION_TEXT = """🎉 Access mil gaya!
+    VERIFICATION_TEXT = """⚠️ 𝖠𝖢𝖢𝖤𝖲𝖲 𝖣𝖤𝖭𝖨𝖤𝖣!
 
 𝖧𝖾𝗒 {} 👋,
 
@@ -130,11 +124,11 @@ class script(object):
 
 𝖧𝖾𝗒 {} 👋,
 
-✅ Verification successful!
-Aapko next session ke liye Premium access mil gaya hai.
+✅ 𝖵𝖤𝖱𝖨𝖥𝖨𝖢𝖠𝖳𝖨𝖮𝖭 𝖲𝖴𝖢𝖢𝖤𝖲𝖲𝖥𝖴𝖫!
+𝖸𝗈𝗎 𝖧𝖺𝗏𝖾 𝖴𝗇𝗅𝗈𝖼𝗄𝖾𝖽 𝖯𝗋𝖾𝗆𝗂𝗎𝗆 𝖠𝖼𝖼𝖾𝗌𝗌 𝖥𝗈𝗋 𝖳𝗁𝖾 𝖭𝖾𝗑𝗍 𝖲𝖾𝗌𝗌𝗂𝗈𝗇.
 
-📂 Ab aap bina interruption ke files download aur stream kar sakte ho!
-👇 Niche click karke apna link le lo."""
+📂 𝖸𝗈𝗎 𝖢𝖺𝗇 𝖭𝗈𝗐 𝖣𝗈𝗐𝗇𝗅𝗈𝖺𝖽 & 𝖲𝗍𝗋𝖾𝖺𝗆 𝖥𝗂𝗅𝖾𝗌 𝖶𝗂𝗍𝗁𝗈𝗎𝗍 𝖨𝗇𝗍𝖾𝗋𝗋𝗎𝗉𝗍𝗂𝗈𝗇!
+👇 𝖢𝗅𝗂𝖼𝗄 𝖡𝖾𝗅𝗈𝗐 𝖳𝗈 𝖦𝖾𝗍 𝖸𝗈𝗎𝗋 𝖫𝗂𝗇𝗄."""
     
     VERIFIED_TXT = """☄ 𝖴𝖲𝖤𝖱 𝖵𝖤𝖱𝖨𝖥𝖨𝖤𝖣 𝖲𝖴𝖢𝖢𝖤𝖲𝖲𝖥𝖴𝖫𝖫𝖸 ☄
 
