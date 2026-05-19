@@ -1,23 +1,18 @@
 from os import environ
 from pyrogram import Client, filters
-from pyrogram.types import (
-    Message,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton
-)
-
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 from database.users_db import db
-from info import PROTECT_CONTENT, FSUB
+from info import PROTECT_CONTENT, DAILY_LIMIT, PREMIUM_DAILY_LIMIT, VERIFICATION_DAILY_LIMIT, FSUB, IS_VERIFY
 import asyncio
-
+from plugins.verification import av_x_verification
 from plugins.ban_manager import ban_manager
 from utils import temp, auto_delete_message, is_user_joined
 
 
-@Client.on_message(filters.command("getvideo") | filters.regex(r"(?i)get file"))
+@Client.on_message(filters.command("getvideo") | filters.regex(r"(?i)get video"))
 async def handle_video_request(client, m: Message):
 
-    # User check
+    # Safety check
     if not m.from_user:
         return
 
@@ -32,117 +27,86 @@ async def handle_video_request(client, m: Message):
     if await ban_manager.check_ban(client, m):
         return
 
-    # =========================================
-    # PREMIUM CHECK
-    # =========================================
-
+    # Premium + limit info
     is_premium = await db.has_premium_access(user_id)
+    # Define limits based on status
+    current_limit = PREMIUM_DAILY_LIMIT if is_premium else DAILY_LIMIT
+    
+    used = await db.get_video_count(user_id) or 0
 
-    if not is_premium:
+    # ------------------------------------------------
+    # LIMIT & VERIFICATION & PREMIUM SYSTEM
+    # ------------------------------------------------
+    
+    # Message for when any absolute max limit is reached
+    limit_reached_msg = (
+        f"𝖸𝗈𝗎'𝗏𝖾 𝖱𝖾𝖺𝖼𝗁𝖾𝖽 𝖸𝗈𝗎𝗋 𝖣𝖺𝗂𝗅𝗒 𝖫𝗂𝗆𝗂𝗍 𝖮𝖿 {used} 𝖥𝗂𝗅𝖾𝗌.\n\n"
+        "𝖳𝗋𝗒 𝖠𝗀𝖺𝗂𝗇 𝖳𝗈𝗆𝗈𝗋𝗋𝗈𝗐!\n"
+        "𝖮𝗋 𝖯𝗎𝗋𝖼𝗁𝖺𝗌𝖾 𝖲𝗎𝖻𝗌𝖼𝗋𝗂𝗉𝗍𝗂𝗈𝗇 𝖳𝗈 𝖡𝗈𝗈𝗌𝗍 𝖸𝗈𝗎𝗋 𝖣𝖺𝗂𝗅𝗒 𝖫𝗂𝗆𝗂𝗍"
+    )
+    buy_button = InlineKeyboardMarkup([
+        [InlineKeyboardButton("• 𝖯𝗎𝗋𝖼𝗁𝖺𝗌𝖾 𝖲𝗎𝖻𝗌𝖼𝗋𝗂𝗉𝗍𝗂𝗈𝗇 •", callback_data="get")]
+    ])
 
-        buy_button = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "💎 Buy 1 Day Premium",
-                        url="https://t.me/Adultjon1_bot?start=premium"
-                    )
-                ]
-            ]
-        )
-
-        return await m.reply_text(
-            "<blockquote>❌ You Need Premium Access To Get Files.\n\n"
-            "💎 Buy 1 Day Premium First.</blockquote>",
-            reply_markup=buy_button
-        )
-
-    # =========================================
-    # VIDEO SYSTEM
-    # =========================================
-
-    file_unique_id = None
-
-    # Deep Link
-    if m.command and len(m.command) > 1:
-        file_unique_id = m.command[1]
-
-    # Specific Video
-    if file_unique_id:
-
-        file_data = await db.videos.find_one(
-            {"file_unique_id": file_unique_id}
-        )
-
-        if not file_data:
+    if is_premium:
+        # Premium User Logic
+        if used >= PREMIUM_DAILY_LIMIT:
             return await m.reply(
-                "❌ Video not found."
+                f"𝖸𝗈𝗎'𝗏𝖾 𝖱𝖾𝖺𝖼𝗁𝖾𝖽 𝖸𝗈𝗎𝗋 𝖯𝗋𝖾𝗆𝗂𝗎𝗆 𝖫𝗂𝗆𝗂𝗍 𝖮𝖿 {PREMIUM_DAILY_LIMIT} 𝖥𝗂𝗅𝖾𝗌.\n"
+                f"𝖳𝗋𝗒 𝖠𝗀𝖺𝗂𝗇 𝖳𝗈𝗆𝗈𝗋𝗋𝗈𝗐!"
             )
-
-        video_id = file_data["file_id"]
-
     else:
+        if used >= VERIFICATION_DAILY_LIMIT:
+            return await m.reply(limit_reached_msg, reply_markup=buy_button)
+        if used >= DAILY_LIMIT:
+            if IS_VERIFY:
+                verified = await av_x_verification(client, m)
+                if not verified:
+                    return 
+            else:
+                return await m.reply(limit_reached_msg, reply_markup=buy_button)
 
-        # Random unseen video
+    # ------------------------------------------------
+    # GET VIDEO
+    # ------------------------------------------------
+    video_id = await db.get_unseen_video(user_id)
+
+    if not video_id:
         try:
-            video_id = await db.get_unseen_video(user_id)
-        except:
-            video_id = None
+            video_id = await db.get_random_video()
+        except Exception as e:
+            print(f"[Random Video Error] {e}")
+            return
 
-        # Backup random video
-        if not video_id:
-            try:
-                video_id = await db.get_random_video()
-            except Exception as e:
-                print(f"[Random Video Error] {e}")
-                return
+    if not video_id:
+        return await m.reply("❌ No videos found in the database.")
 
-        if not video_id:
-            return await m.reply(
-                "❌ No videos available."
-            )
-
-    # =========================================
+    # ------------------------------------------------
     # SEND VIDEO
-    # =========================================
-
+    # ------------------------------------------------
     try:
-
+        # Fixed: Using client.send_video instead of m.reply_video
         sent = await client.send_video(
             chat_id=m.chat.id,
             video=video_id,
             protect_content=PROTECT_CONTENT,
-
-            caption=f"""𝘗𝘰𝘸𝘦𝘳𝘦𝘥 𝘉𝘺: {temp.B_LINK}
-
-<blockquote>
-ᴛʜɪꜱ ꜰɪʟᴇ ᴡɪʟʟ ʙᴇ ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ ᴀꜰᴛᴇʀ 10 ᴍɪɴᴜᴛᴇꜱ.
-ᴘʟᴇᴀꜱᴇ ꜰᴏʀᴡᴀʀᴅ ᴛʜɪꜱ ꜰɪʟᴇ ꜱᴏᴍᴇᴡʜᴇʀᴇ ᴇʟꜱᴇ
-ᴏʀ ꜱᴀᴠᴇ ɪɴ ꜱᴀᴠᴇᴅ ᴍᴇꜱꜱᴀɢᴇꜱ.
-</blockquote>
-""",
-
+            caption=(
+                f"𝘗𝘰𝘸𝘦𝘳𝘦𝘥 𝘉𝘺: {temp.B_LINK}\n\n"
+                "<blockquote>"
+                "ᴛʜɪꜱ ꜰɪʟᴇ ᴡɪʟʟ ʙᴇ ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ ᴀꜰᴛᴇʀ 10 ᴍɪɴᴜᴛᴇꜱ.\n"
+                "ᴘʟᴇᴀꜱᴇ ꜰᴏʀᴡᴀʀᴅ ᴛʜɪꜱ ꜰɪʟᴇ ꜱᴏᴍᴇᴡʜᴇʀᴇ ᴇʟꜱᴇ "
+                "ᴏʀ ꜱᴀᴠᴇ ɪɴ ꜱᴀᴠᴇᴅ ᴍᴇꜱꜱᴀɢᴇꜱ."
+                "</blockquote>"
+            ),
             reply_to_message_id=m.id
         )
 
-        # Increase Count
-        try:
-            await db.increase_video_count(
-                user_id,
-                username
-            )
-        except:
-            pass
+        # Increase daily count ONLY after successful send
+        await db.increase_video_count(user_id, username)
 
-        # Auto Delete
-        asyncio.create_task(
-            auto_delete_message(m, sent)
-        )
+        # Auto delete in background
+        asyncio.create_task(auto_delete_message(m, sent))
 
     except Exception as e:
-
-        print(f"[VIDEO SEND ERROR] {e}")
-
-        await m.reply(
-            f"❌ Failed to send video:\n\n{e}"
-        )
+        await m.reply(f"❌ Failed to send video: {str(e)}")
+        

@@ -1,297 +1,143 @@
-from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from pyrogram.errors import MessageNotModified
-
-from database.users_db import db
+import datetime
+import asyncio
+from pyrogram import Client, filters, enums
+from pyrogram.types import *
+from pyrogram.errors import *
 from Script import script
+from database.users_db import db
+from info import START_PIC, LOG_CHANNEL, PREMIUM_LOGS, FSUB, QR_CODE_IMAGE, DAILY_LIMIT, PREMIUM_DAILY_LIMIT, UPI_ID
+from utils import temp, is_user_joined
+from plugins.verification import verify_user_on_start
+from plugins.send_file import send_requested_file
+from plugins.refer import refer_on_start
 
-# =========================================
-# START COMMAND
-# =========================================
-
-@Client.on_message(filters.command("start"))
-async def start(client, message):
-
+# =================================================
+# 🚀 START COMMAND
+# =================================================
+@Client.on_message(filters.command("start") & filters.private)
+async def start_command(client, message: Message):
     user_id = message.from_user.id
     mention = message.from_user.mention
+    me2 = (await client.get_me()).mention
+    
+    if FSUB and not await is_user_joined(client, message):
+        return
+        
+    argument = message.command[1] if len(message.command) > 1 else None
 
-    if len(message.command) > 1:
-        argument = message.command[1]
-    else:
-        argument = None
+    if argument and argument.startswith('avbotz'):
+        await verify_user_on_start(client, message)
+        return
 
-    # =========================================
-    # PREMIUM PAGE
-    # =========================================
-
-    if argument == "premium":
-
-        buttons = InlineKeyboardMarkup([
-            [
-                InlineKeyboardButton(
-                    "💳 Buy 1 Day - ₹5",
-                    url="https://t.me/Adultjon1_bot?start=buy"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    "🔥 Premium Features",
-                    callback_data="premium_features"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    "👑 Admin",
-                    url="https://t.me/premiumuseronly_Bot"
-                )
-            ]
-        ])
-
-        return await message.reply_text(
-            "<blockquote>💎 Premium Plans\n\n"
-            "✅ 1 Day Access\n"
-            "✅ Unlimited Files\n"
-            "✅ Instant Access\n"
-            "✅ Premium Locked Content\n"
-            "✅ Fast Download Speed\n\n"
-            "🔥 Best Premium Experience Available.</blockquote>",
-            reply_markup=buttons
-        )
-
-    # =========================================
-    # BUY PAGE DIRECT OPEN
-    # =========================================
-
-    elif argument == "buy":
-
-        from plugins.premium import buy_handler
-
-        return await buy_handler(client, message)
-
-    # =========================================
-    # TERMS / HELP / ABOUT
-    # =========================================
-
-    elif argument == "terms":
-        return await message.reply_text(script.TERMS_TXT)
-
+    if argument == "terms":
+        await send_legal_text(client, message, script.TERMS_TXT)
+        return
     elif argument == "disclaimer":
-        return await message.reply_text(script.DISCLAIMER_TXT)
-
+        await send_legal_text(client, message, script.DISCLAIMER_TXT)
+        return
     elif argument == "help":
-        return await message.reply_text(script.HELP_TXT)
-
+        await send_legal_text(client, message, script.HELP_TXT)
+        return
     elif argument == "about":
-        return await message.reply_text(script.ABOUT_TXT)
+        await send_about_text(client, message)
+        return
 
-    # =========================================
-    # REFERRAL
-    # =========================================
-
-    elif argument and argument.startswith("reff_"):
-
+    if argument and argument.startswith("reff_"):
         try:
-            from plugins.referral import refer_on_start
             await refer_on_start(client, message)
-            return
-
+            return 
         except Exception as e:
             print(f"Referral Error: {e}")
 
-    # =========================================
-    # PREMIUM PROTECTED FILE ACCESS
-    # =========================================
-
-    elif argument:
-
-        is_premium = await db.has_premium_access(user_id)
-
-        # ❌ NOT PREMIUM
-        if not is_premium:
-
-            buy_button = InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            "💎 Buy 1 Day Premium",
-                            url="https://t.me/Adultjon1_bot?start=buy"
-                        )
-                    ],
-                    [
-                        InlineKeyboardButton(
-                            "👑 Admin",
-                            url="https://t.me/premiumuseronly_Bot"
-                        )
-                    ]
-                ]
-            )
-
-            return await message.reply_text(
-                "<blockquote>❌ You Need Premium Access To Access This File.\n\n"
-                "💎 Buy 1 Day Premium First.\n"
-                "⚡ Get Instant Unlimited Access.</blockquote>",
-                reply_markup=buy_button
-            )
-
-        # ✅ PREMIUM USER
-        message.text = f"/getvideo {argument}"
-        message.command = ["getvideo", argument]
-
-        from plugins.get_video import handle_video_request
-
-        try:
-            await handle_video_request(client, message)
-
-        except Exception as e:
-            print(f"Video Request Error: {e}")
-
+    if argument and argument.startswith("avx-"):
+        search_id = argument.replace("avx-", "")
+        await send_requested_file(client, message, user_id, search_id)
         return
 
-    # =========================================
-    # ADD USER
-    # =========================================
-
     if not await db.is_user_exist(user_id):
-
-        await db.add_user(
-            user_id,
-            message.from_user.first_name
-        )
-
-    # =========================================
-    # NORMAL START MESSAGE
-    # =========================================
-
-    buttons = InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "💎 Buy Premium",
-                url="https://t.me/Adultjon1_bot?start=buy"
+        await db.add_user(user_id, message.from_user.first_name)
+        try:
+            await client.send_message(
+                LOG_CHANNEL,
+                script.LOG_TEXT.format(me2, user_id, mention)
             )
+        except Exception:
+            pass
+            
+    reply_keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton("Get Video"), KeyboardButton("Brazzers")],
+            [KeyboardButton("My plan"), KeyboardButton("Subscription")]
         ],
-        [
-            InlineKeyboardButton(
-                "👑 Admin",
-                url="https://t.me/premiumuseronly_Bot"
-            )
-        ]
-    ])
+        resize_keyboard=True,
+        one_time_keyboard=False
+    )
 
+    await message.reply_photo(
+        photo=START_PIC,
+        caption=script.START_TXT.format(mention, temp.U_NAME, temp.U_NAME),
+        reply_markup=reply_keyboard,
+        has_spoiler=True
+    )
+
+# =================================================
+# 📜 HELPER HANDLERS
+# =================================================
+
+@Client.on_message(filters.command("disclaimer") & filters.private)
+async def legal_disclaimer(client, message: Message):
+    await send_legal_text(client, message, script.DISCLAIMER_TXT)
+
+@Client.on_message(filters.command("terms") & filters.private)
+async def legal_terms(client, message: Message):
+    await send_legal_text(client, message, script.TERMS_TXT)
+
+@Client.on_message(filters.command("about") & filters.private)
+async def legal_about(client, message: Message):
+    await send_about_text(client, message)
+
+@Client.on_message(filters.command("help") & filters.private)
+async def legal_hepl(client, message: Message):
+    await send_legal_text(client, message, script.HELP_TXT)
+    
+async def send_legal_text(client, message, text):
+    inline_buttons = [[
+        InlineKeyboardButton('• ᴄʟᴏsᴇ •', callback_data='close_data')
+    ]]
     await message.reply_text(
-        "<blockquote>👋 Welcome To Premium Bot\n\n"
-        "🚀 Get Premium Access To Unlock Unlimited Files.\n"
-        "⚡ Fast Download Speed & Instant Delivery.\n"
-        "🔓 Access Premium Locked Content Easily.\n\n"
-        "💎 Buy Premium To Enjoy All Features.</blockquote>",
-        reply_markup=buttons
+        text=text,
+        reply_markup=InlineKeyboardMarkup(inline_buttons),
+        disable_web_page_preview=True
     )
 
+async def send_about_text(client, message):
+    inline_buttons = [[
+        InlineKeyboardButton('• ᴄʟᴏsᴇ •', callback_data='close_data')
+    ]]
+    await message.reply_text(
+        text=script.ABOUT_TXT.format(temp.B_NAME, temp.B_LINK),
+        reply_markup=InlineKeyboardMarkup(inline_buttons),
+        disable_web_page_preview=True
+    )
 
-# =========================================
-# BUY 1 DAY CALLBACK
-# =========================================
+# =========================================================
+# 🔙 CALLBACK QUERY HANDLER
+# =========================================================
+@Client.on_callback_query()
+async def cb_handler(client: Client, query: CallbackQuery):
+    data = query.data
+    user_id = query.from_user.id
 
-@Client.on_callback_query(filters.regex("^buy_1day$"))
-async def buy_1day_callback(client, query):
+    if data == "close_data":
+        await query.message.delete()
 
-    buttons = InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "💳 Open Payment Page",
-                url="https://t.me/Adultjon1_bot?start=buy"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "🔥 Premium Features",
-                callback_data="premium_features"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "👑 Admin",
-                url="https://t.me/premiumuseronly_Bot"
-            )
+    elif data == "get":
+        buttons = [
+            [InlineKeyboardButton('• 𝖢𝗅𝗈𝗌𝖾 •', callback_data='close_data')]
         ]
-    ])
-
-    text = (
-        "<blockquote>💎 1 Day Premium Plan\n\n"
-        "💰 Price: ₹5\n"
-        "⏳ Validity: 1 Day\n"
-        "📥 Unlimited File Access\n"
-        "⚡ Fast Download\n"
-        "🔓 Premium Locked Files Access\n"
-        "🔥 Instant Delivery\n\n"
-        "👇 Click Below To Open Payment Page.</blockquote>"
-    )
-
-    try:
-
-        await query.message.edit_text(
-            text=text,
-            reply_markup=buttons
+        await query.message.reply_photo(
+            photo=QR_CODE_IMAGE,
+            caption=script.SEENBUY_TXT.format(DAILY_LIMIT, PREMIUM_DAILY_LIMIT, UPI_ID),
+            reply_markup=InlineKeyboardMarkup(buttons),
+            parse_mode=enums.ParseMode.HTML
         )
-
-    except MessageNotModified:
-
-        await query.answer(
-            "Already Opened ✅",
-            show_alert=False
-        )
-
-    except Exception as e:
-        print(f"Buy 1 Day Error: {e}")
-
-
-# =========================================
-# PREMIUM FEATURES CALLBACK
-# =========================================
-
-@Client.on_callback_query(filters.regex("^premium_features$"))
-async def premium_features(client, query):
-
-    text = (
-        "<blockquote>🔥 Premium Features\n\n"
-        "✅ Unlimited File Access\n"
-        "✅ No Daily Download Limit\n"
-        "✅ Instant File Delivery\n"
-        "✅ Access Premium Locked Content\n"
-        "✅ Ultra Fast Server Speed\n"
-        "✅ 24x7 Non-Stop Access\n"
-        "✅ Auto Verified Access\n"
-        "✅ Priority Support\n"
-        "✅ Latest Movies & Series First\n"
-        "✅ Ads Free Experience\n\n"
-        "⚡ Why Choose Our Bot?\n"
-        "• Easy To Use Interface\n"
-        "• Safe & Secure Downloads\n"
-        "• Daily New Content Updates\n"
-        "• High Quality Files Available\n\n"
-        "💎 Buy Premium To Unlock All Features.</blockquote>"
-    )
-
-    buttons = InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "💎 Buy Now",
-                url="https://t.me/Adultjon1_bot?start=buy"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "👑 Admin",
-                url="https://t.me/premiumuseronly_Bot"
-            )
-        ]
-    ])
-
-    try:
-
-        await query.message.edit_text(
-            text=text,
-            reply_markup=buttons
-        )
-
-    except Exception as e:
-        print(e)
