@@ -23,7 +23,7 @@ OWNER_USERNAME = environ.get("OWNER_USERNAME", "premiumuseronly_Bot")
 # 💾 DATABASE CONFIGURATION
 # =========================================================
 DB_URL = environ.get("DATABASE_URI", "mongodb+srv://Tigerbhai:Tigerbhai@cluster07374747.v0ojz7d.mongodb.net/?retryWrites=true&w=majority&appName=Cluster07374747")
-DB_NAME = environ.get("DATABASE_NAME", "testing0")
+DB_NAME = environ.get("DATABASE_NAME", "testing")
 
 # =========================================================
 # 📢 CHANNELS & ADMINS
@@ -34,19 +34,19 @@ LOG_CHANNEL = int(environ.get("LOG_CHANNEL", "-1002580860502"))
 PREMIUM_LOGS = int(environ.get("PREMIUM_LOGS", "-1002580860502"))
 VERIFIED_LOG = int(environ.get("VERIFIED_LOG", "-1003184409377"))
 
-POST_CHANNEL = int(environ.get("POST_CHANNEL", "-1002133932311"))
+POST_CHANNEL = int(environ.get("POST_CHANNEL", "-1002217352991"))
 VIDEO_CHANNEL = int(environ.get("VIDEO_CHANNEL", "-1003876396379"))
 BRAZZER_CHANNEL = int(environ.get("BRAZZER_CHANNEL", "-1002259803190"))
 
 # Auth channels list
-auth_channel_str = environ.get("AUTH_CHANNEL", "-1002658797882")
+auth_channel_str = environ.get("AUTH_CHANNEL", "-1002658797882 -1002217352991")
 AUTH_CHANNEL = [int(x) for x in auth_channel_str.split() if x.strip().lstrip("-").isdigit()]
 
 # =========================================================
 # ⚙️ FEATURES & TOGGLES  (FIXED)
 # =========================================================
 FSUB = str_to_bool(environ.get("FSUB"), True)
-IS_VERIFY = str_to_bool(environ.get("IS_VERIFY"), True)
+IS_VERIFY = str_to_bool(environ.get("IS_VERIFY"), False)
 POST_SHORTLINK = str_to_bool(environ.get("POST_SHORTLINK"), True)
 SEND_POST = str_to_bool(environ.get("SEND_POST"), True)
 PROTECT_CONTENT = str_to_bool(environ.get("PROTECT_CONTENT"), False)
@@ -54,7 +54,7 @@ PROTECT_CONTENT = str_to_bool(environ.get("PROTECT_CONTENT"), False)
 # =========================================================
 # 🔢 LIMITS
 # =========================================================
-DAILY_LIMIT = int(environ.get("DAILY_LIMIT", "15"))
+DAILY_LIMIT = int(environ.get("DAILY_LIMIT", "100"))
 VERIFICATION_DAILY_LIMIT = int(environ.get("VERIFICATION_DAILY_LIMIT", "60"))
 PREMIUM_DAILY_LIMIT = int(environ.get("PREMIUM_DAILY_LIMIT", "250"))
 
